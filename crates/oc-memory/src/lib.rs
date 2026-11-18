@@ -232,7 +232,7 @@ tool_struct!(
     CreateRelations,
     "memory_create_relations",
     "Create relations between entities (active voice, e.g. 'uses', 'depends on')",
-    r#"{"type":"object","properties":{"relations":{"type":"array","items":{"type":"object","properties":{"from":{"type":"string"},"to":{"type":"string"},"relationType":{"type":"string"}}},"required":["relations"]}}},"required":["relations"]}"#,
+    r#"{"type":"object","properties":{"relations":{"type":"array","items":{"type":"object","properties":{"from":{"type":"string"},"to":{"type":"string"},"relationType":{"type":"string"}},"required":["from","to","relationType"]}}},"required":["relations"]}"#,
     |v: Value, m: &mut Memory| -> Result<Value> {
     let items: Vec<Relation> = serde_json::from_value(v["relations"].clone())?;
     Ok(serde_json::json!(m.create_relations(items)))
@@ -308,7 +308,7 @@ tool_struct!(
     DeleteRelations,
     "memory_delete_relations",
     "Delete specific relations (exact from/to/relationType match)",
-    r#"{"type":"object","properties":{"relations":{"type":"array","items":{"type":"object","properties":{"from":{"type":"string"},"to":{"type":"string"},"relationType":{"type":"string"}}},"required":["relations"]}}},"required":["relations"]}"#,
+    r#"{"type":"object","properties":{"relations":{"type":"array","items":{"type":"object","properties":{"from":{"type":"string"},"to":{"type":"string"},"relationType":{"type":"string"}},"required":["from","to","relationType"]}}},"required":["relations"]}"#,
     |v: Value, m: &mut Memory| -> Result<Value> {
     let items: Vec<Relation> = serde_json::from_value(v["relations"].clone())?;
     m.delete_relations(items);
