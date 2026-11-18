@@ -1,0 +1,19 @@
+[package]
+name = "oc-cli"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[[bin]]
+name = "oc-rs"
+path = "src/main.rs"
+
+[dependencies]
+oc-core = { path = "../oc-core" }
+oc-provider = { path = "../oc-provider" }
+oc-tools = { path = "../oc-tools" }
+oc-mcp = { path = "../oc-mcp" }
+oc-memory = { path = "../oc-memory" }
+oc-tui = { path = "../oc-tui" }
+anyhow.workspace = true
