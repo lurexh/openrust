@@ -1,0 +1,12 @@
+[package]
+name = "oc-tools"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+oc-core = { path = "../oc-core" }
+serde_json.workspace = true
+anyhow.workspace = true
+walkdir = "2"
