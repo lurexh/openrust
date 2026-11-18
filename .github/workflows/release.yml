@@ -1,0 +1,57 @@
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  linux:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: aarch64-unknown-linux-musl
+          - target: x86_64-unknown-linux-musl
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: taiki-e/install-action@cross
+      - name: Build (static musl)
+        run: cross build --release --target ${{ matrix.target }}
+      - name: Package
+        run: |
+          cd target/${{ matrix.target }}/release
+          strip oc-rs || true
+          tar czf oc-rs-${{ matrix.target }}.tar.gz oc-rs
+          sha256sum oc-rs-${{ matrix.target }}.tar.gz > oc-rs-${{ matrix.target }}.tar.gz.sha256
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            target/${{ matrix.target }}/release/oc-rs-*.tar.gz
+            target/${{ matrix.target }}/release/oc-rs-*.tar.gz.sha256
+
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc
+      - name: Build
+        run: cargo build --release --target x86_64-pc-windows-msvc
+      - name: Package
+        shell: pwsh
+        run: |
+          cd target/x86_64-pc-windows-msvc/release
+          Compress-Archive -Path oc-rs.exe -DestinationPath oc-rs-x86_64-pc-windows-msvc.zip
+          (Get-FileHash oc-rs-x86_64-pc-windows-msvc.zip -Algorithm SHA256).Hash.ToLower() + "  oc-rs-x86_64-pc-windows-msvc.zip" > oc-rs-x86_64-pc-windows-msvc.zip.sha256
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            target/x86_64-pc-windows-msvc/release/oc-rs-*.zip
+            target/x86_64-pc-windows-msvc/release/oc-rs-*.zip.sha256
